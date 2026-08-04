@@ -1,12 +1,12 @@
 # はじめに
 
-English: [../en/getting-started.md](../en/getting-started.md)
+英語版: [../en/getting-started.md](../en/getting-started.md)
 
-**非エンジニアの方:** ビジネス説明だけなら先に [about-this-sample.md](./about-this-sample.md) を読んでください。
+**ビジネスの説明だけ知りたい方:** 先に [about-this-sample.md](./about-this-sample.md) を読んでください。
 
 ## デモの起動
 
-必要: Node.js 20+、pnpm（WSL / Linux / macOS を推奨）。
+必要なもの: Node.js 20 以上、pnpm。Linux / macOS / WSL を推奨します。
 
 ```bash
 cd /path/to/saas-payment-ddd
@@ -14,33 +14,33 @@ pnpm install
 pnpm dev
 ```
 
-ポート **3000** が埋まっている場合:
+ポート **3000** がほかで使われている場合:
 
 ```bash
 pnpm dev -- --port 3001
 ```
 
-開く URL:
+開く場所:
 
 - http://localhost:3000（または `:3001`）— ホーム  
-- http://localhost:3000/pricing — Subscribe  
+- http://localhost:3000/pricing — プラン選択  
 
-成功トーストが出れば OK です。カード課金は発生しません。
+画面に成功メッセージが出れば大丈夫です。カード課金は発生しません。
 
 ## エンジニアがよく通す確認
 
 ```bash
-pnpm test   # ユースケース + parse + HTTP ステータス
+pnpm test   # 自動テスト
 pnpm lint
 pnpm build
 ```
 
 ## データベース
 
-本サンプルは **Docker の Postgres を使いません。** データはプロセス内のメモリです。  
+本サンプルは **Docker 上のデータベースを使いません。** データはアプリを動かしている間だけメモリにあります。  
 詳細: [local-database.md](./local-database.md)。
 
-## ドキュメントの言語
+## ドキュメントの分け方
 
-- 人間: `docs/en/` と `docs/ja/`  
-- エージェント: `CONTEXT.md`、`docs/agents/`、`docs/adr/` は英語のみ
+- 人向け: このフォルダ（`docs/ja/`）と英語（`docs/en/`）— 1ファイル1言語  
+- AI・エージェント向け: `CONTEXT.md`、`docs/agents/`、`docs/adr/` — 英語のみ

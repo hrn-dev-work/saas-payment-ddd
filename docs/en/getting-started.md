@@ -1,12 +1,12 @@
 # Getting started
 
-Japanese: [../ja/getting-started.md](../ja/getting-started.md)
+Japanese version: [../ja/getting-started.md](../ja/getting-started.md)
 
-**Non-engineers:** start with [about-this-sample.md](./about-this-sample.md) if you only need the business story.
+**If you only need the business story:** start with [about-this-sample.md](./about-this-sample.md).
 
 ## Run the demo
 
-Needs: Node.js 20+, pnpm, WSL/Linux or macOS path recommended.
+Needs: Node.js 20+, pnpm. Linux / macOS / WSL is recommended.
 
 ```bash
 cd /path/to/saas-payment-ddd
@@ -23,24 +23,24 @@ pnpm dev -- --port 3001
 Then open:
 
 - http://localhost:3000 (or `:3001`) — home  
-- http://localhost:3000/pricing — Subscribe  
+- http://localhost:3000/pricing — plan selection  
 
-Confirm the success toast. No card is charged.
+Confirm the on-screen success message. No card is charged.
 
 ## Checks engineers usually run
 
 ```bash
-pnpm test   # use case + parse + HTTP status contracts
+pnpm test   # automated tests
 pnpm lint
 pnpm build
 ```
 
 ## Database
 
-This sample **does not use Docker Postgres**. Data is in-memory for the process lifetime.  
-See [local-database.md](./local-database.md).
+This sample **does not use a Docker database**. Data stays in memory for as long as the process runs.  
+Details: [local-database.md](./local-database.md).
 
-## Doc languages
+## How documentation is split
 
-- Humans: `docs/en/` (this tree) and `docs/ja/`  
-- Agents: `CONTEXT.md`, `docs/agents/`, `docs/adr/` — English only
+- Human guides: this folder (`docs/en/`) and Japanese (`docs/ja/`) — one language per file  
+- Agent notes: `CONTEXT.md`, `docs/agents/`, `docs/adr/` — English only

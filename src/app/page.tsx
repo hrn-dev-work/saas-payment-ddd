@@ -13,13 +13,10 @@ export default function HomePage(): React.ReactElement {
         </p>
         <nav className="flex items-center gap-6 text-sm text-[var(--ink-soft)]">
           <Link href="/pricing" className="hover:text-[var(--ink)]">
-            Pricing
+            料金
           </Link>
-          <a
-            href="/api/health"
-            className="hover:text-[var(--ink)]"
-          >
-            Health
+          <a href="/api/health" className="hover:text-[var(--ink)]">
+            稼働確認
           </a>
         </nav>
       </header>
@@ -37,11 +34,10 @@ export default function HomePage(): React.ReactElement {
           Solidpath
         </p>
         <h1 className="max-w-xl text-lg font-medium text-[var(--ink-soft)] sm:text-xl">
-          落ちない課金レールのための DDD サンプル
+          同じ支払い完了のお知らせが2回来ても、契約を二重にしない
         </h1>
         <p className="mt-4 max-w-lg text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-          Webhook の冪等性とドメイン境界の分離を、Stripe
-          モック上でそのまま読めるようにしたポートフォリオ実装です。
+          業務ルールと決済会社とのやりとりを分けた設計を、デモでそのまま確認できるポートフォリオ実装です。実課金はありません。
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
@@ -53,9 +49,9 @@ export default function HomePage(): React.ReactElement {
           </Link>
           <span className="inline-flex items-center gap-2 text-xs text-[var(--muted)]">
             <Shield className="size-3.5" aria-hidden />
-            Idempotent webhooks
+            同じ通知は1回だけ
             <Layers className="ml-2 size-3.5" aria-hidden />
-            Domain / Usecase / Infra
+            役割を分けた構成
           </span>
         </div>
       </main>

@@ -28,23 +28,23 @@ const PLANS: readonly Plan[] = [
     id: "starter",
     name: "Starter",
     priceLabel: "¥9,800",
-    blurb: "単一プロダクト向けの基本サブスク。",
-    features: ["Webhook 冪等ログ", "月次請求", "メールサポート"],
+    blurb: "ひとつのサービス向けの基本プラン。",
+    features: ["同じ完了通知は1回だけ反映", "月ごとの請求", "メールでの問い合わせ"],
   },
   {
     id: "growth",
     name: "Growth",
     priceLabel: "¥29,800",
-    blurb: "複数環境と拡張ポイントを視野に入れた標準構成。",
-    features: ["DDD レイヤ分離", "失敗時の再送耐性", "監査向けイベント履歴"],
+    blurb: "成長期のサービス向け。責務を分けやすい標準構成。",
+    features: ["業務と決済の役割分け", "通知の再送に強い設計", "処理履歴を残せる"],
     highlighted: true,
   },
   {
     id: "scale",
     name: "Scale",
     priceLabel: "¥79,800",
-    blurb: "高単価 SaaS / リプレイス案件向けの堅牢プラン。",
-    features: ["優先キュー設計枠", "SLA 診断", "ドメインレビュー伴走"],
+    blurb: "高単価のSaaSや大規模な作り直し向け。",
+    features: ["優先度の高い設計枠", "稼働の見立て支援", "設計レビューの伴走"],
   },
 ] as const;
 
@@ -83,13 +83,13 @@ export function PricingPlans(): React.ReactElement {
 
         const data = (await response.json()) as SubscribeResponse;
         console.info("[pricing] mock payment success", data);
-        toast.success("決済モックが成功しました", {
-          description: `${data.planId} · sub ${data.subscriptionId.slice(0, 8)}…`,
+        toast.success("デモの申し込みが完了しました", {
+          description: `プラン ${data.planId} · 契約番号 ${data.subscriptionId.slice(0, 8)}…`,
         });
       } catch (error) {
         const message =
-          error instanceof Error ? error.message : "Unknown error";
-        toast.error("登録に失敗しました", { description: message });
+          error instanceof Error ? error.message : "不明なエラー";
+        toast.error("申し込みに失敗しました", { description: message });
       } finally {
         setPendingPlan(null);
       }
@@ -110,7 +110,7 @@ export function PricingPlans(): React.ReactElement {
           {plan.highlighted ? (
             <div className="absolute -top-3 left-6 inline-flex items-center gap-1.5 bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-[var(--accent-ink)]">
               <ShieldCheck className="size-3.5" aria-hidden />
-              Recommended
+              おすすめ
             </div>
           ) : null}
           <CardHeader>
@@ -142,7 +142,7 @@ export function PricingPlans(): React.ReactElement {
               disabled={isPending}
               onClick={() => onSubscribe(plan.id)}
             >
-              {pendingPlan === plan.id ? "Processing…" : "Subscribe"}
+              {pendingPlan === plan.id ? "処理中…" : "申し込み"}
             </Button>
           </CardFooter>
         </Card>

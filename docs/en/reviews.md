@@ -1,7 +1,7 @@
 # Reviews
 
-- Protocol: `.cursor/rules/implementation-review.mdc` (7-stage sequential review).
-- Trigger: ask the agent to run **implementation-review** before commit.
-- Latest report: [../reviews/latest.md](../reviews/latest.md) (overwritten each run).
+- Protocol: project rule for the 7-stage sequential implementation review  
+- Trigger: ask for an implementation review before commit  
+- Latest report: [../reviews/latest.md](../reviews/latest.md) (overwritten each run)
 
-Japanese: [../ja/reviews.md](../ja/reviews.md)
+Japanese version: [../ja/reviews.md](../ja/reviews.md)

@@ -16,9 +16,9 @@ const display = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Solidpath — SaaS 決済基盤サンプル",
+  title: "Solidpath — 課金設計デモ",
   description:
-    "DDD と Webhook 冪等性を可視化する SaaS サブスクリプション決済モック（ポートフォリオ）。",
+    "同じ支払い完了のお知らせが2回来ても契約を二重にしない設計のデモ（実課金なし・ポートフォリオ）。",
 };
 
 export default function RootLayout({
