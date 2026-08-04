@@ -20,6 +20,14 @@
 
 ---
 
+### 2026-08-04 — Session closeout (saas-payment-ddd full sample ship)
+
+- **変更**: Solidpath portfolio end-to-end (scaffold → DDD fix → plain docs → security → public GitHub) + session LEARN into skills
+- **良かった点**: User course-corrected early (conventions before setup prefs); third-party review found real gaps; shipping security before calling sample production-shaped
+- **改善点**: (1) Scaffolded Next before foundation (2) shipped open payment APIs first (3) human docs mixed locale/jargon (4) usecase→infra + dual activation path mid-stream
+- **ルール更新**: bootstrap hard order · docs-language plain/non-mix · portfolio-sample-ship 6a/6b/7b/lessons · project-foundation pre-scaffold · wsl-agent-invoke PS quoting · (prior) security payments stack
+- **次回テスト**: Hosted deploy + browser-smoke when port free; live Stripe signature decode when graduating mock
+
 ### 2026-08-04 — Billing access control + signed webhooks
 
 - **変更**: API key on machine POSTs, Stripe-compatible signatures, Server Action UI, ADR 0002, global skill/rule prevention
