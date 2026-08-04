@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getContainer } from "@/infrastructure/composition/container";
 import { PLAN_IDS } from "@/domain/subscription/value-objects/plan-id";
+import { unauthorizedIfMissingApiKey } from "@/infrastructure/security/require-api-key";
 
 const bodySchema = z.object({
   planId: z.enum(PLAN_IDS),
@@ -11,10 +12,15 @@ const bodySchema = z.object({
 /**
  * POST /api/subscriptions
  *
- * Pricing "Subscribe": mock checkout then activation via handleStripeWebhook
- * (same code path as POST /api/webhooks/stripe).
+ * Machine-facing entry (curl / partners). Requires Bearer or X-Api-Key.
+ * Browser UI must use the Server Action — never put BILLING_API_KEY in the client.
  */
 export async function POST(request: Request): Promise<Response> {
+  const denied = unauthorizedIfMissingApiKey(request);
+  if (denied) {
+    return denied;
+  }
+
   let raw: unknown;
   try {
     raw = await request.json();

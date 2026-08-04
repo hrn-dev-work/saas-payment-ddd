@@ -18,7 +18,8 @@ If the app is careless:
 - the same plan can start twice, or  
 - the customer’s plan status no longer matches money already collected.
 
-This sample **remembers each notice id the first time it is applied**, and **skips a second copy** of the same id.
+This sample **remembers each notice id the first time it is applied**, and **skips a second copy** of the same id.  
+It also **checks that payment notices are signed** and that machine APIs need a key — so the open internet cannot invent “paid” events at will.
 
 ### What you can click
 
@@ -39,6 +40,7 @@ This sample **remembers each notice id the first time it is applied**, and **ski
 |-------|-------------------|
 | Design structure | Business rules stay separate from “talking to the payment company” and from the screen |
 | Reliability | The same notice id is applied only once |
+| Access control | Signed payment notices + API key for machine writers; UI uses server-side actions |
 | Payment flow (demo) | Plan signup and the “payment completed” notice share one internal path |
 | UI | Simple plan list with success feedback |
 
@@ -61,6 +63,8 @@ Architecture notes for agents stay English-only: [CONTEXT.md](CONTEXT.md), [docs
 
 ```bash
 pnpm install
+cp .env.example .env
+# Set long random values (≥16 chars) for BILLING_API_KEY and STRIPE_WEBHOOK_SECRET
 pnpm dev
 # If port 3000 is already in use:
 # pnpm dev -- --port 3001
@@ -69,33 +73,44 @@ pnpm dev
 | URL | Role |
 |-----|------|
 | http://localhost:3000 | Landing page |
-| http://localhost:3000/pricing | Plan selection UI |
-| http://localhost:3000/api/health | Health check |
+| http://localhost:3000/pricing | Plan selection UI (Server Action — no API key in the browser) |
+| http://localhost:3000/api/health | Health check (public) |
 
-**Activation path (important):**  
-`POST /api/subscriptions` runs a mock checkout, then the **same application function** used by `POST /api/webhooks/stripe` (so signup does not take a second shortcut).
+**Security (required):**  
+- Machine `POST /api/subscriptions` needs `Authorization: Bearer $BILLING_API_KEY` (or `X-Api-Key`).  
+- `POST /api/webhooks/stripe` needs a valid `Stripe-Signature` for `$STRIPE_WEBHOOK_SECRET`.  
+- Missing secrets → HTTP **503** (fail closed). Details: [ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md).
 
-### Demo: same notice twice → no double apply
+**Activation path:**  
+UI Server Action or authorized `POST /api/subscriptions` → mock checkout → **same** `handleStripeWebhook` function as the webhook route.
+
+### Demo: signed webhook, same notice twice
 
 ```bash
+export STRIPE_WEBHOOK_SECRET='replace-with-your-local-secret'
+export BILLING_API_KEY='replace-with-your-local-key'
+BODY='{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
+SIG=$(node scripts/sign-webhook.mjs "$BODY")
 curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
-  -d '{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
-
-# Send the same id again → response says already_processed
+  -H "stripe-signature: $SIG" \
+  -d "$BODY"
+# Same body + new signature still same event id → already_processed
+SIG2=$(node scripts/sign-webhook.mjs "$BODY")
 curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
-  -d '{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
+  -H "stripe-signature: $SIG2" \
+  -d "$BODY"
 ```
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm dev` | Local development server |
 | `pnpm build` | Production build |
-| `pnpm test` | Automated tests (business rules, request parsing, HTTP status) |
+| `pnpm test` | Automated tests (security, business rules, HTTP) |
 | `pnpm lint` | Lint |
 
-Stack decision for this sample (no Compose Postgres): [docs/adr/0001-nextjs-monolith-mock-stripe.md](docs/adr/0001-nextjs-monolith-mock-stripe.md).
+Stack decisions: [ADR 0001](docs/adr/0001-nextjs-monolith-mock-stripe.md) · [ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md).
 
 ---
 
@@ -119,7 +134,8 @@ Stack decision for this sample (no Compose Postgres): [docs/adr/0001-nextjs-mono
 - 同じプランが二重に始まり、または  
 - お客様の契約状態と、実際の入金がずれる  
 
-このサンプルは、**一度処理したお知らせの番号を覚え、同じ番号がまた来たら何もしない** 設計です。
+このサンプルは、**一度処理したお知らせの番号を覚え、同じ番号がまた来たら何もしない** 設計です。  
+あわせて **お知らせに署名があること** と、機械向けAPIには鍵が必要なことも入れ、インターネット上で誰でも「支払い完了」をでっち上げられないようにしています。
 
 ### 触れる画面
 
@@ -140,6 +156,7 @@ Stack decision for this sample (no Compose Postgres): [docs/adr/0001-nextjs-mono
 |------|----------------|
 | 設計の分け方 | 「業務ルール」「決済会社とのやりとり」「画面」が混ざらない |
 | 安心できる動き | 同じお知らせ番号は1回だけ反映する |
+| アクセス制御 | 通知の署名確認と機械向けAPIキー。画面はサーバ側処理 |
 | 決済の流れ（デモ） | 申し込みと「支払い完了」通知が、同じ内部の道を通る |
 | 画面 | プラン一覧と成功フィードバック |
 
@@ -169,6 +186,8 @@ Stack decision for this sample (no Compose Postgres): [docs/adr/0001-nextjs-mono
 
 ```bash
 pnpm install
+cp .env.example .env
+# BILLING_API_KEY と STRIPE_WEBHOOK_SECRET に16文字以上のランダム値を入れる
 pnpm dev
 # ポート 3000 が使用中なら:
 # pnpm dev -- --port 3001
@@ -177,30 +196,40 @@ pnpm dev
 | URL | 役割 |
 |-----|------|
 | http://localhost:3000 | 紹介ページ |
-| http://localhost:3000/pricing | プラン選択画面 |
-| http://localhost:3000/api/health | 稼働確認 |
+| http://localhost:3000/pricing | プラン選択（Server Action。ブラウザに秘密鍵なし） |
+| http://localhost:3000/api/health | 稼働確認（公開でよい） |
 
-**契約が始まる経路（重要）:**  
-`POST /api/subscriptions` でモックの支払い手続きのあと、`POST /api/webhooks/stripe` と **同じアプリ内処理** で契約を有効化します（申し込みだけ別ルートで保存しません）。
+**セキュリティ（必須）:**  
+- 機械向け `POST /api/subscriptions` は `Authorization: Bearer $BILLING_API_KEY`（または `X-Api-Key`）  
+- `POST /api/webhooks/stripe` は `$STRIPE_WEBHOOK_SECRET` による署名が必要  
+- 秘密が未設定なら HTTP **503**（開けっ放しにしない）。[ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md)
 
-### デモ: 同じお知らせを2回送っても二重にならない
+**契約が始まる経路:**  
+画面の Server Action、または認証付き API → モック Checkout → Webhook と **同じ**内部処理。
+
+### デモ: 署名付きお知らせを2回送る
 
 ```bash
+export STRIPE_WEBHOOK_SECRET='ローカル用の長い秘密'
+export BILLING_API_KEY='ローカル用の長いキー'
+BODY='{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
+SIG=$(node scripts/sign-webhook.mjs "$BODY")
 curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
-  -d '{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
-
-# 同じ id をもう一度 → 応答は already_processed（すでに処理済み）
+  -H "stripe-signature: $SIG" \
+  -d "$BODY"
+SIG2=$(node scripts/sign-webhook.mjs "$BODY")
 curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
-  -d '{"id":"evt_demo_1","type":"checkout.session.completed","data":{"object":{"id":"sub_1","customer":"cus_1","subscription":"sub_1","metadata":{"planId":"growth"}}}}'
+  -H "stripe-signature: $SIG2" \
+  -d "$BODY"
 ```
 
 | コマンド | 用途 |
 |----------|------|
 | `pnpm dev` | ローカル起動 |
 | `pnpm build` | 本番向けビルド |
-| `pnpm test` | 自動テスト（業務ルール・入力解釈・HTTP 応答） |
+| `pnpm test` | 自動テスト（セキュリティ・業務・HTTP） |
 | `pnpm lint` | 静的チェック |
 
-このサンプルのデータ持ち方の決定: [docs/adr/0001-nextjs-monolith-mock-stripe.md](docs/adr/0001-nextjs-monolith-mock-stripe.md)。
+決定記録: [ADR 0001](docs/adr/0001-nextjs-monolith-mock-stripe.md) · [ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md)。

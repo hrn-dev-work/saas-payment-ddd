@@ -11,6 +11,8 @@ Needs: Node.js 20+, pnpm. Linux / macOS / WSL is recommended.
 ```bash
 cd /path/to/saas-payment-ddd
 pnpm install
+cp .env.example .env
+# Set BILLING_API_KEY and STRIPE_WEBHOOK_SECRET (≥16 random chars each)
 pnpm dev
 ```
 

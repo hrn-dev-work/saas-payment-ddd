@@ -1,23 +1,24 @@
 import { NextResponse } from "next/server";
 import { getContainer } from "@/infrastructure/composition/container";
 import { parseStripeWebhookPayload } from "@/infrastructure/stripe/parse-webhook";
+import { readAndVerifyWebhookRequest } from "@/infrastructure/security/verify-webhook-request";
 
 /**
  * POST /api/webhooks/stripe
  *
- * Controller role only: parse HTTP → call use case → map result to status codes.
- * Business rules and idempotency live in `handleStripeWebhook`.
- *
- * Status mapping (Stripe retry semantics):
- * - 200: processed or duplicate — do not retry
- * - 400: invalid payload — do not retry
- * - 422: domain rejected (e.g. missing subscription) — fix data; demo does not auto-retry as 500
- * - 500: unexpected failure — Stripe should retry
+ * 1. Verify Stripe-compatible signature (payment-provider trust boundary)
+ * 2. Parse + Zod / domain validation
+ * 3. Idempotent use case
  */
 export async function POST(request: Request): Promise<Response> {
+  const verified = await readAndVerifyWebhookRequest(request);
+  if (!verified.ok) {
+    return verified.response;
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(verified.rawBody) as unknown;
   } catch {
     return NextResponse.json(
       { error: "Request body must be valid JSON" },

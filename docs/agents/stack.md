@@ -11,8 +11,9 @@
 | API | Route Handlers under `src/app/api/*` (controller layer) |
 | Frontend | React · Tailwind CSS · shadcn-style Card/Button · Lucide · Sonner |
 | Payments | Mock Stripe client (`src/infrastructure/stripe`) |
+| Access control | `BILLING_API_KEY` on machine APIs · Stripe-compatible webhook signatures · Server Action for UI ([ADR 0002](../adr/0002-billing-access-control-and-webhook-signatures.md)) |
 | DB | None for demo (in-memory repositories) |
-| Validation | Zod at HTTP boundaries |
+| Validation | Zod at HTTP boundaries after signature / API-key gate |
 | Packages | pnpm |
 | Tests | Vitest |
 | Hosting | Vercel (single deploy) · GitHub |

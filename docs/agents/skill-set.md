@@ -10,10 +10,11 @@ Stack SSOT: [stack.md](./stack.md). Routing: `.cursor/rules/project-entry.mdc` +
 | Area | Skills |
 |------|--------|
 | Backend | Next.js Route Handlers · practical DDD (domain / usecase / infrastructure) |
-| API | REST (`/api/subscriptions`, `/api/webhooks/stripe`, `/api/health`) · Zod boundary validation |
+| API | REST (`/api/subscriptions`, `/api/webhooks/stripe`, `/api/health`) · Zod after auth gates |
+| Access control | API key on machine writes · webhook HMAC signatures · Server Action for UI |
 | Data | In-memory repository adapters (demo) |
-| Integrations | Mock Stripe checkout · Stripe-like webhook parse · **idempotent event processing** |
-| Quality | Vitest (webhook idempotency · parse · HTTP status contracts) · `pnpm lint` · `pnpm build` |
+| Integrations | Mock Stripe checkout · verified webhook intake · **same-notice-once** processing |
+| Quality | Vitest (security · parse · HTTP · use cases) · `pnpm lint` · `pnpm build` |
 | Local ops | `pnpm dev` · no Docker DB for sample · `.env.example` keys only · `.cursorignore` |
 
 **Out of scope:** live Stripe charges, full auth/SSO, multi-tenant billing, real invoice PDF.

@@ -20,6 +20,14 @@
 
 ---
 
+### 2026-08-04 — Billing access control + signed webhooks
+
+- **変更**: API key on machine POSTs, Stripe-compatible signatures, Server Action UI, ADR 0002, global skill/rule prevention
+- **良かった点**: Fail-closed secrets; no client-side keys; tests for 401/503/signed happy path
+- **改善点**: First ship left payment endpoints anonymous for demo narrative — fixed
+- **ルール更新**: portfolio-sample-ship §6b · portfolio-conventions-audit B5c · default-stack payments · foundation security.md · security-git payments note · repo payment-security.mdc
+- **次回テスト**: Hosted deploy with env secrets; optional full stripe SDK whsec decode when live
+
 ### 2026-08-04 — Solidpath portfolio sample (DDD + webhook idempotency)
 
 - **変更**: Next.js monorepo sample with domain/usecase/infrastructure, mock Stripe, `/pricing`, docs EN+JA, Vitest (18)

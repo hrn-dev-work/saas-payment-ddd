@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { subscribeToPlanAction } from "@/app/pricing/actions";
 
 type Plan = {
   id: PlanId;
@@ -48,17 +49,8 @@ const PLANS: readonly Plan[] = [
   },
 ] as const;
 
-type SubscribeResponse = {
-  status: string;
-  subscriptionId: string;
-  planId: PlanId;
-  checkoutSessionId: string;
-  mockPaymentIntentId: string;
-};
-
 /**
- * Pricing grid: pure presentation + thin fetch to mock backend.
- * Domain status never lives in the button handler beyond HTTP orchestration.
+ * Pricing grid: UI calls a Server Action (no API keys in the browser).
  */
 export function PricingPlans(): React.ReactElement {
   const [pendingPlan, setPendingPlan] = useState<PlanId | null>(null);
@@ -68,20 +60,10 @@ export function PricingPlans(): React.ReactElement {
     startTransition(async () => {
       setPendingPlan(planId);
       try {
-        const response = await fetch("/api/subscriptions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ planId }),
-        });
-
-        if (!response.ok) {
-          const err = (await response.json().catch(() => null)) as {
-            error?: string;
-          } | null;
-          throw new Error(err?.error ?? "Subscribe failed");
+        const data = await subscribeToPlanAction(planId);
+        if (!data.ok) {
+          throw new Error(data.error);
         }
-
-        const data = (await response.json()) as SubscribeResponse;
         console.info("[pricing] mock payment success", data);
         toast.success("デモの申し込みが完了しました", {
           description: `プラン ${data.planId} · 契約番号 ${data.subscriptionId.slice(0, 8)}…`,

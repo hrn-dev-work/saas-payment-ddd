@@ -91,9 +91,12 @@ See [docs/agents/security.md](docs/agents/security.md). Summary:
 
 ### Public API & secrets
 
-- Demo APIs are unauthenticated; do not deploy with writable public internet state without auth.
-- No Stripe secret keys in repo or `NEXT_PUBLIC_*`.
-- Validate webhook JSON with Zod before use-case calls.
+- Writable HTTP requires secrets (fail closed): `BILLING_API_KEY`, `STRIPE_WEBHOOK_SECRET` ([ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md)).
+- Webhooks: verify Stripe-compatible signature **before** parse / use case.
+- Machine `POST /api/subscriptions`: Bearer or `X-Api-Key`.
+- Browser pricing: **Server Action** only (no billing keys in client / `NEXT_PUBLIC_*`).
+- `GET /api/health` may stay public for probes.
+- Validate webhook JSON with Zod after signature verification.
 
 ### Public security baselines
 
@@ -123,3 +126,4 @@ See [docs/agents/security.md](docs/agents/security.md). Summary:
 | 2026-08-04 | Portfolio sample name Solidpath; target webhook idempotency + DDD visuals | Accepted |
 | 2026-08-04 | Stack exception: Next monorepo/in-memory vs default FastAPI+Postgres | Accepted (ADR 0001) |
 | 2026-08-04 | Single activation path via handleStripeWebhook; PaymentCheckoutPort in domain | Accepted |
+| 2026-08-04 | Billing API key + webhook signatures + Server Action UI (ADR 0002) | Accepted |

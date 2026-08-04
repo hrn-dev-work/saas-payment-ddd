@@ -12,6 +12,18 @@ Detailed project traps: **`CONTEXT.md` § Security Guardrails** (if present).
 - Keep production dumps / CSV exports out of the repo. Use root `.cursorignore` so Cursor does not index `.env*`, keys, logs, or dump files.
 - Prefer Faker (or equivalent) seeds for local DB data — never hardcode real PII in seed scripts.
 
+## Payments / webhooks (this sample and any billing surface)
+
+| Control | Required |
+|---------|----------|
+| `STRIPE_WEBHOOK_SECRET` | HMAC verification of provider notices **before** business logic ([ADR 0002](../adr/0002-billing-access-control-and-webhook-signatures.md)) |
+| `BILLING_API_KEY` | Machine writes to billing HTTP APIs (`Bearer` / `X-Api-Key`) |
+| Browser UI | Server Actions (or BFF) only — **never** ship keys in client JS |
+| Fail closed | Missing / short secrets → refuse writes (e.g. HTTP 503), do not open anonymous demos for “ease” |
+| Public | Health probes only unless product requires more |
+
+Mock providers are fine; **mock is not an excuse to skip authn of webhooks or machine APIs**.
+
 ## Grilling — security (Round 1 extension)
 
 When scope touches API, forms, URLs, file I/O, or deployment, also confirm:

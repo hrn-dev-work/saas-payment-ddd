@@ -11,6 +11,8 @@
 ```bash
 cd /path/to/saas-payment-ddd
 pnpm install
+cp .env.example .env
+# BILLING_API_KEY と STRIPE_WEBHOOK_SECRET に16文字以上を設定
 pnpm dev
 ```
 

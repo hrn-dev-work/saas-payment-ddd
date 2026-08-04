@@ -1,0 +1,25 @@
+---
+description: >-
+  Payment / billing HTTP surfaces require API keys and webhook signatures.
+  Server Actions for browser; never NEXT_PUBLIC secrets. On payment API work.
+globs: src/app/api/**/*,src/infrastructure/security/**/*,src/app/**/actions.ts
+alwaysApply: false
+---
+
+# Payment access control (this repository)
+
+Follow [docs/adr/0002-billing-access-control-and-webhook-signatures.md](../../docs/adr/0002-billing-access-control-and-webhook-signatures.md) and [docs/agents/security.md](../../docs/agents/security.md).
+
+## Required
+
+- `STRIPE_WEBHOOK_SECRET` verified **before** parse / use case on provider callbacks
+- `BILLING_API_KEY` on machine writable routes (`Bearer` / `X-Api-Key`)
+- Browser flows: Server Action or BFF — **no** billing secrets in client bundles
+- Fail closed when secrets missing (do not leave anonymous open demos)
+- Health/read-only probes may remain public when intentional
+
+## Forbidden
+
+- `NEXT_PUBLIC_*` for `BILLING_API_KEY` / webhook secrets
+- Trusting raw webhook JSON without signature verification
+- “Mock Stripe means we skip auth” as a design choice
