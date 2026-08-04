@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+:root {
+  /* Solidpath billing — mineral ink on warm concrete (light, no purple default) */
+  --background: #e8e4dc;
+  --foreground: #1c2420;
+  --ink: #1c2420;
+  --ink-soft: #3a4540;
+  --muted: #5c675f;
+  --surface: #f4f1ea;
+  --surface-2: #ebe6dc;
+  --line: #c9c2b4;
+  --accent: #0f6b5c;
+  --accent-hover: #0c574b;
+  --accent-ink: #f4f1ea;
+  --success: #1f6b3a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(15, 107, 92, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(28, 36, 32, 0.08), transparent 50%),
+    linear-gradient(180deg, #efebe3 0%, #e8e4dc 40%, #e2ddd3 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, white);
+}
