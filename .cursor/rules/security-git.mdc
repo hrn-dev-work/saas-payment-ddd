@@ -11,6 +11,7 @@ alwaysApply: false
 - Never put API keys, tokens, or `.env` values in code, logs, or commits
 - Never send server-only keys to the browser
 - Do not log PII
+- **Payments / webhooks:** verify provider signatures before business logic; machine writable routes need credentials; mock is not an excuse to leave endpoints anonymous; fail closed if secrets missing
 
 ## Git
 
