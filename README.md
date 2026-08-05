@@ -114,7 +114,25 @@ Stack decisions: [ADR 0001](docs/adr/0001-nextjs-monolith-mock-stripe.md) · [AD
 
 ---
 
-# saas-payment-ddd（Solidpath）
+## Skill set
+
+| Area | Skills |
+|------|--------|
+| Backend | Next.js Route Handlers · practical DDD (domain / usecase / infrastructure) |
+| API | REST (`/api/subscriptions`, `/api/webhooks/stripe`, `/api/health`) · Zod after auth gates |
+| Access control | API key on machine writes · webhook HMAC signatures · Server Action for UI |
+| Data | In-memory repository adapters (demo) |
+| Integrations | Mock Stripe checkout · verified webhook intake · same-notice-once processing |
+| Quality | Vitest (security · parse · HTTP · use cases) · `pnpm lint` · `pnpm build` |
+| Local ops | `pnpm dev` · no Docker DB for sample · `.env.example` keys only · `.cursorignore` |
+
+**Out of scope:** live Stripe charges, full auth/SSO, multi-tenant billing, real invoice PDF.
+
+Agent detail: [docs/agents/skill-set.md](docs/agents/skill-set.md).
+
+---
+
+# saas-payment-ddd（日本語）
 
 **ひとことで:**  
 決済会社から **同じ「支払い完了」のお知らせが2回来ても、契約を2つ作らない** ための設計を見せるデモです。実際のお金は動きません（ポートフォリオ用）。
@@ -233,3 +251,21 @@ curl -s -X POST http://localhost:3000/api/webhooks/stripe \
 | `pnpm lint` | 静的チェック |
 
 決定記録: [ADR 0001](docs/adr/0001-nextjs-monolith-mock-stripe.md) · [ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md)。
+
+---
+
+## スキルセット
+
+| 領域 | スキル |
+|------|--------|
+| Backend | Next.js Route Handlers · 実践的 DDD（domain / usecase / infrastructure） |
+| API | REST（`/api/subscriptions`, `/api/webhooks/stripe`, `/api/health`）· 認証ゲート後の Zod |
+| Access control | 機械向け書き込みの API キー · webhook HMAC · UI は Server Action |
+| Data | インメモリ repository（デモ） |
+| Integrations | Mock Stripe checkout · 署名検証付き webhook · 同一通知は1回だけ |
+| Quality | Vitest（security · parse · HTTP · use cases）· `pnpm lint` · `pnpm build` |
+| Local ops | `pnpm dev` · サンプルでは Docker DB なし · `.env.example` のキーのみ · `.cursorignore` |
+
+**対象外:** 本番 Stripe 課金、本格認証/SSO、マルチテナント課金、請求書 PDF。
+
+エージェント向け詳細（英語）: [docs/agents/skill-set.md](docs/agents/skill-set.md)。
