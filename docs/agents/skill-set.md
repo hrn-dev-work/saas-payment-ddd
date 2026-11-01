@@ -1,6 +1,6 @@
 # Skill set (agents)
 
-**English only.** Human-facing skill tables belong in both halves of root `README.md` (`docs-language` — EN top / JA bottom).  
+**English only.** Human-facing skill tables belong in both `README.md` (Japanese) and `README.en.md` (English), with top language buttons (`docs-language`).\
 Stack SSOT: [stack.md](./stack.md). Routing: `.cursor/rules/project-entry.mdc` + `~/.cursor/rules/global-agent-routing.mdc`.
 
 ---
@@ -25,7 +25,7 @@ Stack SSOT: [stack.md](./stack.md). Routing: `.cursor/rules/project-entry.mdc` +
 
 | Skill | When |
 |-------|------|
-| `docs-language` | README.md EN top + JA bottom; `docs/en|ja` one locale; this directory stays English |
+| `docs-language` | README.md (Japanese) + README.en.md (English), with top language buttons; `docs/en|ja` one locale; this directory stays English |
 | `wsl-agent-invoke` | Shell, git, gh on `\\wsl.localhost\` / WSL Ubuntu workspace |
 | `bootstrap-project-foundation` | Missing `CONTEXT.md` or `project-entry.mdc` |
 | `distinctive-ui` | Pricing / landing UI |
@@ -74,4 +74,4 @@ Stack SSOT: [stack.md](./stack.md). Routing: `.cursor/rules/project-entry.mdc` +
 
 ## E. Maintenance
 
-When stack or demonstrated skills change: update section A here, both README halves, and ADR/stack if needed.
+When stack or demonstrated skills change: update section A here, both README language files, and ADR/stack if needed.
