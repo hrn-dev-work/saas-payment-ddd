@@ -2,8 +2,7 @@
 
 [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-0969da?style=for-the-badge)](./README.md) [![English](https://img.shields.io/badge/English-57606a?style=for-the-badge)](./README.en.md)
 
-**ひとことで:**\
-決済会社から **同じ「支払い完了」のお知らせが2回来ても、契約を2つ作らない** ための設計を見せるデモです。実際のお金は動きません（ポートフォリオ用）。
+**ひとことで:** 決済会社から **同じ「支払い完了」のお知らせが2回来ても、契約を2つ作らない** ための設計を見せるデモです。実際のお金は動きません（ポートフォリオ用）。
 
 **想定読者:** 決済・SaaSのバックエンドを見るクライアント、プロジェクトマネージャ、エンジニア。
 
@@ -17,11 +16,10 @@
 
 アプリの作りが甘いと:
 
-- 同じプランが二重に始まり、または\
-- お客様の契約状態と、実際の入金がずれる\
+- 同じプランが二重に始まる。
+- お客様の契約状態と、実際の入金がずれる。
 
-このサンプルは、**一度処理したお知らせの番号を覚え、同じ番号がまた来たら何もしない** 設計です。\
-あわせて **お知らせに署名があること** と、機械向けAPIには鍵が必要なことも入れ、インターネット上で誰でも「支払い完了」をでっち上げられないようにしています。
+このサンプルは、**一度処理したお知らせの番号を覚え、同じ番号がまた来たら何もしない** 設計です。あわせて **お知らせに署名があること** と、機械向けAPIには鍵が必要なことも入れ、インターネット上で誰でも「支払い完了」をでっち上げられないようにしています。
 
 ### 触れる画面
 
@@ -32,8 +30,8 @@
 
 ### わざとやっていないこと
 
-- 本物のカード決済や本番用の秘密キー\
-- ログインや、複数顧客向けの本格 SaaS 一式\
+- 本物のカード決済や本番用の秘密キー
+- ログインや、複数顧客向けの本格 SaaS 一式
 - 本番用データベース（デモ中のデータはアプリを動かしている間だけ）
 
 ### この作品で示したいこと
@@ -46,13 +44,13 @@
 | 決済の流れ（デモ） | 申し込みと「支払い完了」通知が、同じ内部の道を通る |
 | 画面 | プラン一覧と成功フィードバック |
 
-パソコン向けの詳細一覧（英語）: [docs/agents/skill-set.md](docs/agents/skill-set.md)。
+機械向けのスキル一覧（英語）: [docs/agents/skill-set.md](docs/agents/skill-set.md)。
 
 ### クラウドワークスなどへの掲載文案（短文）
 
 評価者向けの平易な言い方です。
 
-- **タイトル例（35文字以内）:** 再送でも契約が二重にならないSaaS課金設計\
+- **タイトル例（35文字以内）:** 再送でも契約が二重にならないSaaS課金設計
 - **概要例:** 決済完了の通知が2回来ても契約を1回だけ反映するサーバ設計と、画面と決済処理の切り分けを、デモで示します。実課金はありません。
 
 ### 人向けドキュメント（まずここ）
@@ -85,13 +83,13 @@ pnpm dev
 | http://localhost:3000/pricing | プラン選択（Server Action。ブラウザに秘密鍵なし） |
 | http://localhost:3000/api/health | 稼働確認（公開でよい） |
 
-**セキュリティ（必須）:**\
-- 機械向け `POST /api/subscriptions` は `Authorization: Bearer $BILLING_API_KEY`（または `X-Api-Key`）\
-- `POST /api/webhooks/stripe` は `$STRIPE_WEBHOOK_SECRET` による署名が必要\
+**セキュリティ（必須）:**
+
+- 機械向け `POST /api/subscriptions` は `Authorization: Bearer $BILLING_API_KEY`（または `X-Api-Key`）
+- `POST /api/webhooks/stripe` は `$STRIPE_WEBHOOK_SECRET` による署名が必要
 - 秘密が未設定なら HTTP **503**（開けっ放しにしない）。[ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md)
 
-**契約が始まる経路:**\
-画面の Server Action、または認証付き API → モック Checkout → Webhook と **同じ**内部処理。
+**契約が始まる経路:** 画面の Server Action、または認証付き `POST /api/subscriptions` → モック Checkout → Webhook ルートと **同じ** `handleStripeWebhook`。
 
 ### デモ: 署名付きお知らせを2回送る
 
@@ -104,6 +102,7 @@ curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
   -H "stripe-signature: $SIG" \
   -d "$BODY"
+# 同じ本文に新しい署名を付けても、イベントIDは同じ → already_processed
 SIG2=$(node scripts/sign-webhook.mjs "$BODY")
 curl -s -X POST http://localhost:3000/api/webhooks/stripe \
   -H 'content-type: application/json' \
