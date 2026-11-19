@@ -2,8 +2,7 @@
 
 [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-57606a?style=for-the-badge)](./README.md) [![English](https://img.shields.io/badge/English-0969da?style=for-the-badge)](./README.en.md)
 
-**What this is (one sentence):**\
-A portfolio demo of **subscription billing that does not activate the same plan twice** when a payment provider sends the same “payment completed” notice more than once. No real money moves.
+**What this is (one sentence):** A portfolio demo of **subscription billing that does not activate the same plan twice** when a payment provider sends the same “payment completed” notice more than once. No real money moves.
 
 **Who it is for:** Clients, project managers, and engineers reviewing payment / backend work samples.
 
@@ -17,11 +16,10 @@ Payment companies (for example Stripe) sometimes **send the same “payment comp
 
 If the app is careless:
 
-- the same plan can start twice, or\
-- the customer’s plan status no longer matches money already collected.
+- The same plan can start twice.
+- The customer’s plan status no longer matches money already collected.
 
-This sample **remembers each notice id the first time it is applied**, and **skips a second copy** of the same id.\
-It also **checks that payment notices are signed** and that machine APIs need a key — so the open internet cannot invent “paid” events at will.
+This sample **remembers each notice id the first time it is applied**, and **skips a second copy** of the same id. It also **checks that payment notices are signed** and that machine APIs need a key — so the open internet cannot invent “paid” events at will.
 
 ### What you can click
 
@@ -32,8 +30,8 @@ It also **checks that payment notices are signed** and that machine APIs need a 
 
 ### What this sample deliberately does *not* do
 
-- Real card payment or live Stripe secret keys\
-- Login or a full multi-customer SaaS product\
+- Real card payment or live Stripe secret keys
+- Login or a full multi-customer SaaS product
 - A production database (demo data lives only while the app process is running)
 
 ### Skills this repo is meant to demonstrate
@@ -47,6 +45,13 @@ It also **checks that payment notices are signed** and that machine APIs need a 
 | UI | Simple plan list with success feedback |
 
 Machine-oriented skill list (English): [docs/agents/skill-set.md](docs/agents/skill-set.md).
+
+### Short listing copy (CrowdWorks and similar)
+
+Plain wording for reviewers.
+
+- **Example title (35 characters or fewer):** No second SaaS contract on resend
+- **Example summary:** The demo shows a server design that applies a payment-completed notice only once even if it arrives twice, and a split between the screen and payment processing. There is no real charge.
 
 ### Human guides (start here)
 
@@ -78,13 +83,13 @@ pnpm dev
 | http://localhost:3000/pricing | Plan selection UI (Server Action — no API key in the browser) |
 | http://localhost:3000/api/health | Health check (public) |
 
-**Security (required):**\
-- Machine `POST /api/subscriptions` needs `Authorization: Bearer $BILLING_API_KEY` (or `X-Api-Key`).\
-- `POST /api/webhooks/stripe` needs a valid `Stripe-Signature` for `$STRIPE_WEBHOOK_SECRET`.\
+**Security (required):**
+
+- Machine `POST /api/subscriptions` needs `Authorization: Bearer $BILLING_API_KEY` (or `X-Api-Key`).
+- `POST /api/webhooks/stripe` needs a valid `Stripe-Signature` for `$STRIPE_WEBHOOK_SECRET`.
 - Missing secrets → HTTP **503** (fail closed). Details: [ADR 0002](docs/adr/0002-billing-access-control-and-webhook-signatures.md).
 
-**Activation path:**\
-UI Server Action or authorized `POST /api/subscriptions` → mock checkout → **same** `handleStripeWebhook` function as the webhook route.
+**Activation path:** UI Server Action or authorized `POST /api/subscriptions` → mock checkout → **same** `handleStripeWebhook` function as the webhook route.
 
 ### Demo: signed webhook, same notice twice
 
@@ -130,4 +135,4 @@ Stack decisions: [ADR 0001](docs/adr/0001-nextjs-monolith-mock-stripe.md) · [AD
 
 **Out of scope:** live Stripe charges, full auth/SSO, multi-tenant billing, real invoice PDF.
 
-Agent detail: [docs/agents/skill-set.md](docs/agents/skill-set.md).
+Agent detail (English): [docs/agents/skill-set.md](docs/agents/skill-set.md).
